@@ -2,30 +2,9 @@ const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Ensure users and addresses tables exist on startup
-pool.query(`CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)`);
-
-// 🆕 Add this block to create the addresses table
-pool.query(`CREATE TABLE IF NOT EXISTS addresses (
-    id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    street_address VARCHAR(255) NOT NULL,
-    city VARCHAR(100) NOT NULL,
-    state VARCHAR(100) NOT NULL,
-    postal_code VARCHAR(20) NOT NULL,
-    country VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(20),
-    is_default BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-)`);
+// NOTE: The CREATE TABLE queries have been removed from this file.
+// They should be run once on your database using a separate script (e.g., init.sql)
+// or a migration tool.
 
 // Register new user
 exports.register = async (req, res) => {
