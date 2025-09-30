@@ -279,12 +279,12 @@ const CheckoutPage = () => {
                 const token = localStorage.getItem('token');
                 setLoadingAddresses(true);
                 try {
-                  const saveRes = await axios.post('/api/profile/addresses', formData, {
+                  const saveRes = await api.post('/profile/addresses', formData, {
                     headers: { Authorization: `Bearer ${token}` }
                   });
                   setIsAdding(false);
                   // Refresh addresses
-                  const response = await axios.get('/api/profile/addresses', {
+                  const response = await api.get('/profile/addresses', {
                     headers: { Authorization: `Bearer ${token}` }
                   });
                   setAddresses(response.data);
