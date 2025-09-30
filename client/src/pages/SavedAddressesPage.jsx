@@ -12,7 +12,6 @@ const SavedAddresses = ({ user }) => {
 
   const navigate = useNavigate();
 
-  // Redirect to login if user is not authenticated
   useEffect(() => {
     if (!user) {
       navigate('/login');
@@ -46,19 +45,17 @@ const SavedAddresses = ({ user }) => {
     
     try {
       if (editingAddress) {
-        // Update existing address
         await api.put(`/profile/addresses/${editingAddress.id}`, data, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setEditingAddress(null);
       } else {
-        // Add new address
         await api.post('/profile/addresses', data, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
       setIsAdding(false);
-      fetchAddresses(); // Refresh the list of addresses
+      fetchAddresses();
     } catch (err) {
       setError('Failed to save address. Please check your information.');
     }
@@ -73,7 +70,7 @@ const SavedAddresses = ({ user }) => {
       await api.delete(`/profile/addresses/${addressId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      fetchAddresses(); // Refresh the list
+      fetchAddresses();
     } catch (err) {
       setError('Failed to delete address.');
     }
@@ -83,7 +80,6 @@ const SavedAddresses = ({ user }) => {
     return null;
   }
 
-  // Styling similar to CartPage
   return (
     <div
       style={{
@@ -116,28 +112,53 @@ const SavedAddresses = ({ user }) => {
         {error && (
           <div style={{ color: '#d32f2f', background: '#fffde7', borderRadius: 8, padding: '12px', marginBottom: 16, fontWeight: 700 }}>{error}</div>
         )}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
-          <button
-            onClick={() => { setIsAdding(true); setEditingAddress(null); }}
-            style={{
-              background: 'linear-gradient(90deg, #ffd600 60%, #fffde7 100%)',
-              color: '#222',
-              fontWeight: 700,
-              fontSize: 16,
-              padding: '10px 24px',
+
+        {/* --- Corrected section for no addresses message and button --- */}
+        {addresses.length === 0 && !loading && !error && (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '2rem 0',
+            textAlign: 'center',
+          }}>
+            <div style={{
+              color: '#1976d2',
+              background: '#fffde7',
               borderRadius: 8,
-              boxShadow: '0 2px 8px #ffd60022',
-              border: 'none',
-              cursor: 'pointer',
-              marginBottom: 8,
-              transition: 'background 0.2s',
-            }}
-            onMouseOver={e => e.currentTarget.style.background = 'linear-gradient(90deg, #fffde7 60%, #ffd600 100%)'}
-            onMouseOut={e => e.currentTarget.style.background = 'linear-gradient(90deg, #ffd600 60%, #fffde7 100%)'}
-          >
-            <FaPlus style={{ marginRight: 8 }} /> Add New Address
-          </button>
-        </div>
+              padding: '12px',
+              marginBottom: 16,
+              fontWeight: 700,
+              width: '100%',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            }}>
+              You have no saved addresses.
+            </div>
+            <button
+              onClick={() => { setIsAdding(true); setEditingAddress(null); }}
+              style={{
+                background: 'linear-gradient(90deg, #ffd600 60%, #fffde7 100%)',
+                color: '#222',
+                fontWeight: 700,
+                fontSize: 16,
+                padding: '10px 24px',
+                borderRadius: 8,
+                boxShadow: '0 2px 8px #ffd60022',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background 0.2s',
+                marginTop: '1rem' 
+              }}
+              onMouseOver={e => e.currentTarget.style.background = 'linear-gradient(90deg, #fffde7 60%, #ffd600 100%)'}
+              onMouseOut={e => e.currentTarget.style.background = 'linear-gradient(90deg, #ffd600 60%, #fffde7 100%)'}
+            >
+              <FaPlus style={{ marginRight: 8 }} /> Add New Address
+            </button>
+          </div>
+        )}
+        {/* --- End of corrected section --- */}
+        
         {(isAdding || editingAddress) && (
           <div style={{ background: '#f5f6fa', borderRadius: 14, boxShadow: '0 2px 8px #1976d233', padding: '2rem', marginBottom: 24 }}>
             <h4 style={{ marginBottom: 18, color: '#1976d2', fontWeight: 800 }}>{editingAddress ? 'Edit Address' : 'Add New Address'}</h4>
@@ -215,9 +236,6 @@ const SavedAddresses = ({ user }) => {
               </button>
             </form>
           </div>
-        )}
-        {addresses.length === 0 && !loading && !error && (
-          <div style={{ color: '#1976d2', background: '#fffde7', borderRadius: 8, padding: '12px', marginBottom: 16, fontWeight: 700 }}>You have no saved addresses.</div>
         )}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
           {addresses.map((address) => (
