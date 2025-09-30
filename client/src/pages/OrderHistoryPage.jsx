@@ -1,4 +1,5 @@
 import React from 'react';
+import api from '../services/api.js';
 import { useNavigate } from 'react-router-dom';
 
 const OrderHistoryPage = () => {
@@ -10,10 +11,10 @@ const OrderHistoryPage = () => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('/api/orders', {
+        const res = await api.get('/orders', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        const data = await res.json();
+        const data = res.data;
         if (Array.isArray(data)) {
           setOrders(data);
         } else {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import api from '../services/api.js';
 
 const ProfilePage = ({ user }) => {
   const navigate = useNavigate();
@@ -11,12 +11,15 @@ const ProfilePage = ({ user }) => {
 
   useEffect(() => {
     if (!user?.id) return;
-  fetch(`/api/auth/user/${user.id}`)
-      .then(res => res.json())
-      .then(data => {
-        setProfile(data);
-        setForm({ username: data.username, email: data.email, password: '' });
-      });
+    api.get(`/auth/user/${user.id}`) // Use api.get and remove '/api' from the path
+    .then(res => {
+      const data = res.data; // Axios puts the response data in the 'data' property
+      setProfile(data);
+      setForm({ username: data.username, email: data.email, password: '' });
+    })
+    .catch(err => {
+        console.error("Failed to fetch profile:", err);
+    });
   }, [user]);
 
   const handleChange = e => {
@@ -26,19 +29,13 @@ const ProfilePage = ({ user }) => {
   const handleSave = async e => {
     e.preventDefault();
     setMessage('');
-  const res = await fetch(`/api/auth/user/${user.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setProfile(data);
+    try {
+      const res = await api.put(`/auth/user/${user.id}`, form); // Use api.put, Axios handles JSON
+      setProfile(res.data);
       setEdit(false);
       setMessage('Profile updated!');
-    } else {
-      const err = await res.json();
-      setMessage(err.message || 'Update failed');
+    } catch (err) {
+      setMessage(err.response?.data?.message || 'Update failed');
     }
   };
 

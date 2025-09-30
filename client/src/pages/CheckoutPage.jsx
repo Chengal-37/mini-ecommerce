@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api.js';
 import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext.jsx';
 
@@ -32,7 +32,7 @@ const CheckoutPage = () => {
       setAddressError('');
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('/api/profile/addresses', {
+        const response = await api.get('/profile/addresses', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setAddresses(response.data);
@@ -156,7 +156,7 @@ const CheckoutPage = () => {
               onClick={async () => {
                 try {
                   const token = localStorage.getItem('token');
-                  await axios.post('/api/orders', {
+                  await api.post('/orders', {
                     items: cartItems,
                     shipping: selectedAddress,
                     total: getTotalPrice(),

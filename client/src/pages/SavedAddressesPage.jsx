@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // You may need to install this: npm install axios
+import api from '../services/api.js';
 import { FaPlus, FaEdit, FaTrash, FaSpinner } from 'react-icons/fa';
 
 const SavedAddresses = ({ user }) => {
@@ -26,7 +26,7 @@ const SavedAddresses = ({ user }) => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('/api/profile/addresses', {
+      const response = await api.get('/profile/addresses', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAddresses(response.data);
@@ -47,13 +47,13 @@ const SavedAddresses = ({ user }) => {
     try {
       if (editingAddress) {
         // Update existing address
-        await axios.put(`/api/profile/addresses/${editingAddress.id}`, data, {
+        await api.put(`/profile/addresses/${editingAddress.id}`, data, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setEditingAddress(null);
       } else {
         // Add new address
-        await axios.post('/api/profile/addresses', data, {
+        await api.post('/profile/addresses', data, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -70,7 +70,7 @@ const SavedAddresses = ({ user }) => {
 
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`/api/profile/addresses/${addressId}`, {
+      await api.delete(`/profile/addresses/${addressId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchAddresses(); // Refresh the list
